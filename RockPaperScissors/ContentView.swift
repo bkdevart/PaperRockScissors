@@ -15,17 +15,24 @@ struct ContentView: View {
     @State private var currentChoice = Int.random(in: 0...2)
     @State private var shouldWin = Bool.random()
     @State private var userScore = 0
+    @State private var turn = 1
+    @State private var showingScore = false
     
     var body: some View {
         VStack {
-            Text("Your score: \(userScore)")
             Text(allMoves[currentChoice])
             Text(winOrLose())
+                .font(.largeTitle)
             Spacer()
             ForEach(0 ..< 3) { number in
                 Button(allMoves[number],
                        action: { userCheck(number) })
             }
+        }
+        .alert(isPresented: $showingScore) {
+            Alert(title: Text("Game Complete!"),
+                  message: Text("Your score is \(userScore)"),
+                  dismissButton: .default(Text("Continue")))
         }
     }
 
@@ -73,6 +80,12 @@ struct ContentView: View {
         }
         currentChoice = Int.random(in: 0...2)
         shouldWin = Bool.random()
+        turn += 1
+        if turn > 10 {
+            showingScore = true
+            turn = 1
+            userScore = 0
+        }
     }
 }
 
