@@ -7,7 +7,21 @@
 
 import SwiftUI
 
-
+struct GameButton: View {
+    var icon: String
+    
+    init(icon: String) {
+        self.icon = icon
+    }
+    
+    var body: some View {
+        Image(self.icon)
+            .resizable()
+            .aspectRatio(contentMode: .fit)
+            .clipShape(Capsule())
+            .overlay(Capsule().stroke(Color .black, lineWidth: 1))
+    }
+}
 
 struct ContentView: View {
 
@@ -20,19 +34,19 @@ struct ContentView: View {
     
     var body: some View {
         VStack {
-            Text(allMoves[currentChoice])
+            GameButton(icon: allMoves[currentChoice])
             Text(winOrLose())
                 .font(.largeTitle)
-            Spacer()
             ForEach(0 ..< 3) { number in
-                Button(allMoves[number],
-                       action: { userCheck(number) })
+                Button(action: { userCheck(number) }) {
+                    GameButton(icon: self.allMoves[number])
+                 }
             }
         }
         .alert(isPresented: $showingScore) {
             Alert(title: Text("Game Complete!"),
                   message: Text("Your score is \(userScore)"),
-                  dismissButton: .default(Text("Continue")))
+                  dismissButton: .default(Text("Continue")){ userScore = 0 })
         }
     }
 
@@ -84,7 +98,6 @@ struct ContentView: View {
         if turn > 10 {
             showingScore = true
             turn = 1
-            userScore = 0
         }
     }
 }
